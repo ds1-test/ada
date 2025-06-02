@@ -1,0 +1,66 @@
+#include <stdio.h>
+
+int n, m;
+int w[100], p[100];
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+void knapsack_DP() {
+    int V[100][100];
+    int i, j;
+
+    for(i = 0; i <= n; i++) {
+        for(j = 0; j <= m; j++) {
+            if(i == 0 || j == 0)
+                V[i][j] = 0;
+            else if(w[i - 1] <= j)
+                V[i][j] = max(V[i - 1][j], p[i - 1] + V[i - 1][j - w[i - 1]]);
+            else
+                V[i][j] = V[i - 1][j];
+        }
+    }
+
+    printf("\nKnapsack DP Table:\n");
+    for(i = 0; i <= n; i++) {
+        for(j = 0; j <= m; j++) {
+            printf("%3d ", V[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nMaximum Profit: %d\n", V[n][m]);
+
+    printf("\nItems included:\n");
+    i = n; j = m;
+    while(i > 0 && j > 0) {
+        if(V[i][j] != V[i - 1][j]) {
+            printf("Item %d (Weight = %d, Profit = %d)\n", i, w[i - 1], p[i - 1]);
+            j -= w[i - 1];
+        }
+        i--;
+    }
+}
+
+int main() {
+    int i;
+
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    printf("Enter weights of items:\n");
+    for(i = 0; i < n; i++)
+        scanf("%d", &w[i]);
+
+    printf("Enter profits of items:\n");
+    for(i = 0; i < n; i++)
+        scanf("%d", &p[i]);
+
+    printf("Enter capacity of knapsack: ");
+    scanf("%d", &m);
+
+    knapsack_DP();
+
+    return 0;
+}
